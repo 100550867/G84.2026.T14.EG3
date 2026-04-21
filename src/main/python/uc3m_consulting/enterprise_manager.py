@@ -175,59 +175,59 @@ class EnterpriseManager:
 
         try:
             parsed_date = datetime.strptime(query_date, "%d/%m/%Y").date()
-        except ValueError as ex:
-            raise EnterpriseManagementException("Invalid date format") from ex
+        except ValueError as exception:
+            raise EnterpriseManagementException("Invalid date format") from exception
 
 
         # open documents
         try:
             with open(TEST_DOCUMENTS_STORE_FILE, "r", encoding="utf-8", newline="") as file:
-                d_list = json.load(file)
-        except FileNotFoundError as ex:
-            raise EnterpriseManagementException("Wrong file  or file path") from ex
+                document_list = json.load(file)
+        except FileNotFoundError as exception:
+            raise EnterpriseManagementException("Wrong file  or file path") from exception
 
 
-        rst = 0
+        documents_found = 0
 
         # loop to find
-        for el in d_list:
-            time_val = el["register_date"]
+        for document_entry in document_list:
+            register_timestamp = document_entry["register_date"]
 
             # string conversion for easy match
-            doc_date_str = datetime.fromtimestamp(time_val).strftime("%d/%m/%Y")
+            document_date = datetime.fromtimestamp(register_timestamp).strftime("%d/%m/%Y")
 
-            if doc_date_str == query_date:
-                d_obj = datetime.fromtimestamp(time_val, tz=timezone.utc)
-                with freeze_time(d_obj):
+            if document_date == query_date:
+                frozen_datetime = datetime.fromtimestamp(register_timestamp, tz=timezone.utc)
+                with freeze_time(frozen_datetime):
                     # check the project id (thanks to freezetime)
                     # if project_id are different then the data has been
                     #manipulated
-                    p = ProjectDocument(el["project_id"], el["file_name"])
-                    if p.document_signature == el["document_signature"]:
-                        rst = rst + 1
+                    project_document = ProjectDocument(document_entry["project_id"], document_entry["file_name"])
+                    if project_document.document_signature == document_entry["document_signature"]:
+                        documents_found = documents_found + 1
                     else:
                         raise EnterpriseManagementException("Inconsistent document signature")
 
-        if rst == 0:
+        if documents_found == 0:
             raise EnterpriseManagementException("No documents found")
         # prepare json text
         now_str = datetime.now(timezone.utc).timestamp()
-        s = {"Querydate":  query_date,
+        report_entry = {"Querydate":  query_date,
              "ReportDate": now_str,
-             "Numfiles": rst
+             "Numfiles": documents_found
              }
 
         try:
             with open(TEST_NUMDOCS_STORE_FILE, "r", encoding="utf-8", newline="") as file:
-                dl = json.load(file)
+                reports_list = json.load(file)
         except FileNotFoundError:
-            dl = []
-        except json.JSONDecodeError as ex:
-            raise EnterpriseManagementException("JSON Decode Error - Wrong JSON Format") from ex
-        dl.append(s)
+            reports_list = []
+        except json.JSONDecodeError as exception:
+            raise EnterpriseManagementException("JSON Decode Error - Wrong JSON Format") from exception
+        reports_list.append(report_entry)
         try:
             with open(TEST_NUMDOCS_STORE_FILE, "w", encoding="utf-8", newline="") as file:
-                json.dump(dl, file, indent=2)
-        except FileNotFoundError as ex:
-            raise EnterpriseManagementException("Wrong file  or file path") from ex
-        return rst
+                json.dump(reports_list, file, indent=2)
+        except FileNotFoundError as exception:
+            raise EnterpriseManagementException("Wrong file  or file path") from exception
+        return documents_found
