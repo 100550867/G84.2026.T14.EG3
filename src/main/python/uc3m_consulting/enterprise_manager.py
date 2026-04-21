@@ -259,9 +259,17 @@ class EnterpriseManager:
         except json.JSONDecodeError as exception:
             raise EnterpriseManagementException("JSON Decode Error - Wrong JSON Format") from exception
         reports_list.append(report_entry)
+        self.save_reports_lists(reports_list)
+        return documents_found
+
+    def save_reports_lists(self, reports_list):
+        """
+        Saves reports list in the JSON file.
+        """
         try:
-            with open(TEST_NUMDOCS_STORE_FILE, "w", encoding="utf-8", newline="") as file:
+            with open(TEST_NUMDOCS_STORE_FILE, "w", encoding="utf-8",
+                      newline="") as file:
                 json.dump(reports_list, file, indent=2)
         except FileNotFoundError as exception:
-            raise EnterpriseManagementException("Wrong file  or file path") from exception
-        return documents_found
+            raise EnterpriseManagementException(
+                "Wrong file  or file path") from exception
