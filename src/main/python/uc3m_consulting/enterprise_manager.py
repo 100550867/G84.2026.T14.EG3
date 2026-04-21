@@ -122,7 +122,6 @@ class EnterpriseManager:
         if budget_amount < 50000 or budget_amount > 1000000:
             raise EnterpriseManagementException("Invalid budget amount")
 
-
         new_project = EnterpriseProject(company_cif=company_cif,
                                         project_acronym=project_acronym,
                                         project_description=project_description,
@@ -131,26 +130,33 @@ class EnterpriseManager:
                                         project_budget=budget)
 
         try:
-            with open(PROJECTS_STORE_FILE, "r", encoding="utf-8", newline="") as file:
-                t_l = json.load(file)
+            with open(PROJECTS_STORE_FILE, "r", encoding="utf-8",
+                      newline="") as file:
+                projects_list = json.load(file)
         except FileNotFoundError:
-            t_l = []
-        except json.JSONDecodeError as ex:
-            raise EnterpriseManagementException("JSON Decode Error - Wrong JSON Format") from ex
+            projects_list = []
+        except json.JSONDecodeError as exception:
+            raise EnterpriseManagementException(
+                "JSON Decode Error - Wrong JSON Format") from exception
 
-        for t_i in t_l:
-            if t_i == new_project.to_json():
-                raise EnterpriseManagementException("Duplicated project in projects list")
+        for stored_project in projects_list:
+            if stored_project == new_project.to_json():
+                raise EnterpriseManagementException(
+                    "Duplicated project in projects list")
 
-        t_l.append(new_project.to_json())
+        projects_list.append(new_project.to_json())
 
         try:
-            with open(PROJECTS_STORE_FILE, "w", encoding="utf-8", newline="") as file:
-                json.dump(t_l, file, indent=2)
-        except FileNotFoundError as ex:
-            raise EnterpriseManagementException("Wrong file  or file path") from ex
-        except json.JSONDecodeError as ex:
-            raise EnterpriseManagementException("JSON Decode Error - Wrong JSON Format") from ex
+            with open(PROJECTS_STORE_FILE, "w", encoding="utf-8",
+                      newline="") as file:
+                json.dump(projects_list, file, indent=2)
+        except FileNotFoundError as exception:
+            raise EnterpriseManagementException(
+                "Wrong file  or file path") from exception
+        except json.JSONDecodeError as exception:
+            raise EnterpriseManagementException(
+                "JSON Decode Error - Wrong JSON Format") from exception
+
         return new_project.project_id
 
 
