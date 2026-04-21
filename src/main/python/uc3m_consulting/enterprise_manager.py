@@ -29,20 +29,20 @@ class EnterpriseManager:
         cif_numbers = company_cif[1:8]
         cif_last_character = company_cif[8]
 
-        s1 = 0
-        s2 = 0
+        even_positions_sum = 0
+        odd_positions_sum = 0
 
         for i in range(len(cif_numbers)):
             if i % 2 == 0:
-                x = int(cif_numbers[i]) * 2
-                if x > 9:
-                    s1 = s1 + (x // 10) + (x % 10)
+                doubled_digit = int(cif_numbers[i]) * 2
+                if doubled_digit > 9:
+                    even_positions_sum = even_positions_sum + (doubled_digit // 10) + (doubled_digit % 10)
                 else:
-                    s1 = s1 + x
+                    even_positions_sum = even_positions_sum + doubled_digit
             else:
-                s2 = s2 + int(cif_numbers[i])
+                odd_positions_sum = odd_positions_sum + int(cif_numbers[i])
 
-        t = s1 + s2
+        t = even_positions_sum + odd_positions_sum
         u2 = t % 10
         r = 10 - u2
 
