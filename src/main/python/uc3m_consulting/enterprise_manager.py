@@ -102,6 +102,7 @@ class EnterpriseManager:
         match = department_pattern.fullmatch(department)
         if not match:
             raise EnterpriseManagementException("Invalid department")
+
     @staticmethod
     def validate_budget(budget):
         """
@@ -154,6 +155,7 @@ class EnterpriseManager:
         except json.JSONDecodeError as exception:
             raise EnterpriseManagementException(
                 "JSON Decode Error - Wrong JSON Format") from exception
+
     # pylint: disable=too-many-arguments, too-many-positional-arguments
     def register_project(self,
                          company_cif: str,
