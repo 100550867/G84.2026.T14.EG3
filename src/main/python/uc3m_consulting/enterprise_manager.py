@@ -64,8 +64,8 @@ class EnterpriseManager:
     def validate_starting_date(self, starting_date):
         """validates the  date format  using regex"""
         mr = re.compile(r"^(([0-2]\d|3[0-1])\/(0\d|1[0-2])\/\d\d\d\d)$")
-        res = mr.fullmatch(starting_date)
-        if not res:
+        match = mr.fullmatch(starting_date)
+        if not match:
             raise EnterpriseManagementException("Invalid date format")
 
         try:
