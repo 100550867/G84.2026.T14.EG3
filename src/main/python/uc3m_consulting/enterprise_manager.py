@@ -70,8 +70,8 @@ class EnterpriseManager:
 
         try:
             my_date = datetime.strptime(starting_date, "%d/%m/%Y").date()
-        except ValueError as ex:
-            raise EnterpriseManagementException("Invalid date format") from ex
+        except ValueError as exception:
+            raise EnterpriseManagementException("Invalid date format") from exception
 
         if my_date < datetime.now(timezone.utc).date():
             raise EnterpriseManagementException("Project's date must be today or later.")
