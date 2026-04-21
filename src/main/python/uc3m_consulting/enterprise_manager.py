@@ -79,7 +79,29 @@ class EnterpriseManager:
         if parsed_date.year < 2025 or parsed_date.year > 2050:
             raise EnterpriseManagementException("Invalid date format")
         return starting_date
-    #pylint: disable=too-many-arguments, too-many-positional-arguments
+
+    @staticmethod
+    def validate_project_fields(project_acronym, project_description,
+                                department):
+        """
+        Validates, acronym, description and department fields
+        """
+        acronym_pattern = re.compile(r"^[a-zA-Z0-9]{5,10}")
+        description_pattern = re.compile(r"^.{10,30}$")
+        department_pattern = re.compile(r"(HR|FINANCE|LEGAL|LOGISTICS)")
+
+        match = acronym_pattern.fullmatch(project_acronym)
+        if not match:
+            raise EnterpriseManagementException("Invalid acronym")
+
+        match = description_pattern.fullmatch(project_description)
+        if not match:
+            raise EnterpriseManagementException("Invalid description format")
+        match = department_pattern.fullmatch(department)
+        if not match:
+            raise EnterpriseManagementException("Invalid department")
+
+    # pylint: disable=too-many-arguments, too-many-positional-arguments
     def register_project(self,
                          company_cif: str,
                          project_acronym: str,
@@ -90,20 +112,7 @@ class EnterpriseManager:
         """registers a new project"""
         self.validate_cif(company_cif)
 
-        acronym_pattern = re.compile(r"^[a-zA-Z0-9]{5,10}")
-        match = acronym_pattern.fullmatch(project_acronym)
-        if not match:
-            raise EnterpriseManagementException("Invalid acronym")
-
-        description_pattern = re.compile(r"^.{10,30}$")
-        match = description_pattern.fullmatch(project_description)
-        if not match:
-            raise EnterpriseManagementException("Invalid description format")
-
-        department_pattern = re.compile(r"(HR|FINANCE|LEGAL|LOGISTICS)")
-        match = department_pattern.fullmatch(department)
-        if not match:
-            raise EnterpriseManagementException("Invalid department")
+        self.validate_project_fields(project_acronym, project_description, department)
 
         self.validate_starting_date(starting_date)
 
@@ -191,7 +200,7 @@ class EnterpriseManager:
         # open documents
         try:
             with open(TEST_DOCUMENTS_STORE_FILE, "r", encoding="utf-8", newline="") as file:
-                document_list = json.load(file)
+                documents_list = json.load(file)
         except FileNotFoundError as exception:
             raise EnterpriseManagementException("Wrong file  or file path") from exception
 
@@ -199,7 +208,7 @@ class EnterpriseManager:
         documents_found = 0
 
         # loop to find
-        for document_entry in document_list:
+        for document_entry in documents_list:
             register_timestamp = document_entry["register_date"]
 
             # string conversion for easy match
@@ -220,9 +229,9 @@ class EnterpriseManager:
         if documents_found == 0:
             raise EnterpriseManagementException("No documents found")
         # prepare json text
-        now_str = datetime.now(timezone.utc).timestamp()
+        report_timestamp = datetime.now(timezone.utc).timestamp()
         report_entry = {"Querydate":  query_date,
-             "ReportDate": now_str,
+             "ReportDate": report_timestamp,
              "Numfiles": documents_found
              }
 
