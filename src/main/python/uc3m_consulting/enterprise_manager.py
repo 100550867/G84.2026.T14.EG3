@@ -208,7 +208,7 @@ class EnterpriseManager:
             raise EnterpriseManagementException("Invalid date format")
 
         try:
-            parsed_date = datetime.strptime(query_date, "%d/%m/%Y").date()
+            datetime.strptime(query_date, "%d/%m/%Y").date()
         except ValueError as exception:
             raise EnterpriseManagementException("Invalid date format") from exception
 
@@ -242,14 +242,15 @@ class EnterpriseManager:
             raise EnterpriseManagementException("No documents found")
         # prepare json text
 
-        report_entry = self.build_report_entry(documents_found, query_date)
-        reports_list = self.load_reports_lists()
+        report_entry = self.build_report_entry(query_date, documents_found)
+        reports_list = self.load_reports_list()
         reports_list.append(report_entry)
-        self.save_reports_lists(reports_list)
+        self.save_reports_list(reports_list)
 
         return documents_found
 
-    def build_report_entry(self, documents_found, query_date):
+    @staticmethod
+    def build_report_entry(query_date, documents_found):
         """
         Builds the report entry for the query date.
         """
@@ -260,7 +261,8 @@ class EnterpriseManager:
                         }
         return report_entry
 
-    def load_reports_lists(self):
+    @staticmethod
+    def load_reports_list():
         """
         Loads the reports lists from the JSON file
         """
@@ -275,7 +277,8 @@ class EnterpriseManager:
                 "JSON Decode Error - Wrong JSON Format") from exception
         return reports_list
 
-    def load_documents(self):
+    @staticmethod
+    def load_documents():
         """
         Loads documents from the JSON file
         """
@@ -288,7 +291,8 @@ class EnterpriseManager:
                 "Wrong file  or file path") from exception
         return documents_list
 
-    def save_reports_lists(self, reports_list):
+    @staticmethod
+    def save_reports_list(reports_list):
         """
         Saves reports list in the JSON file.
         """
