@@ -247,16 +247,22 @@ class EnterpriseManager:
              "Numfiles": documents_found
              }
 
+        reports_list = self.load_reports_lists()
+        reports_list.append(report_entry)
+        self.save_reports_lists(reports_list)
+        return documents_found
+
+    def load_reports_lists(self):
         try:
-            with open(TEST_NUMDOCS_STORE_FILE, "r", encoding="utf-8", newline="") as file:
+            with open(TEST_NUMDOCS_STORE_FILE, "r", encoding="utf-8",
+                      newline="") as file:
                 reports_list = json.load(file)
         except FileNotFoundError:
             reports_list = []
         except json.JSONDecodeError as exception:
-            raise EnterpriseManagementException("JSON Decode Error - Wrong JSON Format") from exception
-        reports_list.append(report_entry)
-        self.save_reports_lists(reports_list)
-        return documents_found
+            raise EnterpriseManagementException(
+                "JSON Decode Error - Wrong JSON Format") from exception
+        return reports_list
 
     def load_documents(self):
         try:
