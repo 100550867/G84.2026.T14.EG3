@@ -241,18 +241,29 @@ class EnterpriseManager:
         if documents_found == 0:
             raise EnterpriseManagementException("No documents found")
         # prepare json text
-        report_timestamp = datetime.now(timezone.utc).timestamp()
-        report_entry = {"Querydate":  query_date,
-             "ReportDate": report_timestamp,
-             "Numfiles": documents_found
-             }
 
+        report_entry = self.build_report_entry(documents_found, query_date)
         reports_list = self.load_reports_lists()
         reports_list.append(report_entry)
         self.save_reports_lists(reports_list)
+
         return documents_found
 
+    def build_report_entry(self, documents_found, query_date):
+        """
+        Builds the report entry for the query date.
+        """
+        report_timestamp = datetime.now(timezone.utc).timestamp()
+        report_entry = {"Querydate": query_date,
+                        "ReportDate": report_timestamp,
+                        "Numfiles": documents_found
+                        }
+        return report_entry
+
     def load_reports_lists(self):
+        """
+        Loads the reports lists from the JSON file
+        """
         try:
             with open(TEST_NUMDOCS_STORE_FILE, "r", encoding="utf-8",
                       newline="") as file:
@@ -265,6 +276,9 @@ class EnterpriseManager:
         return reports_list
 
     def load_documents(self):
+        """
+        Loads documents from the JSON file
+        """
         try:
             with open(TEST_DOCUMENTS_STORE_FILE, "r", encoding="utf-8",
                       newline="") as file:
