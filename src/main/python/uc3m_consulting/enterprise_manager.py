@@ -32,15 +32,15 @@ class EnterpriseManager:
         even_positions_sum = 0
         odd_positions_sum = 0
 
-        for i in range(len(cif_numbers)):
-            if i % 2 == 0:
-                doubled_digit = int(cif_numbers[i]) * 2
+        for index in range(len(cif_numbers)):
+            if index % 2 == 0:
+                doubled_digit = int(cif_numbers[index]) * 2
                 if doubled_digit > 9:
                     even_positions_sum = even_positions_sum + (doubled_digit // 10) + (doubled_digit % 10)
                 else:
                     even_positions_sum = even_positions_sum + doubled_digit
             else:
-                odd_positions_sum = odd_positions_sum + int(cif_numbers[i])
+                odd_positions_sum = odd_positions_sum + int(cif_numbers[index])
 
         total_sum = even_positions_sum + odd_positions_sum
         last_digit = total_sum % 10
@@ -69,14 +69,14 @@ class EnterpriseManager:
             raise EnterpriseManagementException("Invalid date format")
 
         try:
-            my_date = datetime.strptime(starting_date, "%d/%m/%Y").date()
+            parsed_date = datetime.strptime(starting_date, "%d/%m/%Y").date()
         except ValueError as exception:
             raise EnterpriseManagementException("Invalid date format") from exception
 
-        if my_date < datetime.now(timezone.utc).date():
+        if parsed_date < datetime.now(timezone.utc).date():
             raise EnterpriseManagementException("Project's date must be today or later.")
 
-        if my_date.year < 2025 or my_date.year > 2050:
+        if parsed_date.year < 2025 or parsed_date.year > 2050:
             raise EnterpriseManagementException("Invalid date format")
         return starting_date
     #pylint: disable=too-many-arguments, too-many-positional-arguments
