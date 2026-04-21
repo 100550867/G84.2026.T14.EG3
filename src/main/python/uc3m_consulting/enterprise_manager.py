@@ -3,6 +3,8 @@ import re
 import json
 
 from datetime import datetime, timezone
+from multiprocessing.managers import public_methods
+
 from freezegun import freeze_time
 from uc3m_consulting.enterprise_project import EnterpriseProject
 from uc3m_consulting.enterprise_management_exception import EnterpriseManagementException
@@ -100,6 +102,26 @@ class EnterpriseManager:
         match = department_pattern.fullmatch(department)
         if not match:
             raise EnterpriseManagementException("Invalid department")
+    @staticmethod
+    def validate_budget(budget):
+        """
+
+        """
+        try:
+            budget_amount = float(budget)
+        except ValueError as exception:
+            raise EnterpriseManagementException(
+                "Invalid budget amount") from exception
+
+        budget_as_text = str(budget_amount)
+        if '.' in budget_as_text:
+            decimal_places = len(budget_as_text.split('.')[1])
+            if decimal_places > 2:
+                raise EnterpriseManagementException("Invalid budget amount")
+
+        if budget_amount < 50000 or budget_amount > 1000000:
+            raise EnterpriseManagementException("Invalid budget amount")
+
 
     # pylint: disable=too-many-arguments, too-many-positional-arguments
     def register_project(self,
@@ -116,20 +138,7 @@ class EnterpriseManager:
 
         self.validate_starting_date(starting_date)
 
-        try:
-            budget_amount = float(budget)
-        except ValueError as exception:
-            raise EnterpriseManagementException(
-                "Invalid budget amount") from exception
-
-        budget_as_text = str(budget_amount)
-        if '.' in budget_as_text:
-            decimal_places = len(budget_as_text.split('.')[1])
-            if decimal_places > 2:
-                raise EnterpriseManagementException("Invalid budget amount")
-
-        if budget_amount < 50000 or budget_amount > 1000000:
-            raise EnterpriseManagementException("Invalid budget amount")
+        self.validate_budget(budget)
 
         new_project = EnterpriseProject(company_cif=company_cif,
                                         project_acronym=project_acronym,
