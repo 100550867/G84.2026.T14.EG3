@@ -214,11 +214,7 @@ class EnterpriseManager:
 
 
         # open documents
-        try:
-            with open(TEST_DOCUMENTS_STORE_FILE, "r", encoding="utf-8", newline="") as file:
-                documents_list = json.load(file)
-        except FileNotFoundError as exception:
-            raise EnterpriseManagementException("Wrong file  or file path") from exception
+        documents_list = self.load_documents()
 
 
         documents_found = 0
@@ -261,6 +257,16 @@ class EnterpriseManager:
         reports_list.append(report_entry)
         self.save_reports_lists(reports_list)
         return documents_found
+
+    def load_documents(self):
+        try:
+            with open(TEST_DOCUMENTS_STORE_FILE, "r", encoding="utf-8",
+                      newline="") as file:
+                documents_list = json.load(file)
+        except FileNotFoundError as exception:
+            raise EnterpriseManagementException(
+                "Wrong file  or file path") from exception
+        return documents_list
 
     def save_reports_lists(self, reports_list):
         """
