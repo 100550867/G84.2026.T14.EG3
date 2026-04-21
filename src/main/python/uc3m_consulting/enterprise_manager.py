@@ -85,25 +85,27 @@ class EnterpriseManager:
                          project_acronym: str,
                          project_description: str,
                          department: str,
-                         date: str,
+                         starting_date: str,
                          budget: str):
         """registers a new project"""
         self.validate_cif(company_cif)
-        mr = re.compile(r"^[a-zA-Z0-9]{5,10}")
-        res = mr.fullmatch(project_acronym)
-        if not res:
+
+        acronym_pattern = re.compile(r"^[a-zA-Z0-9]{5,10}")
+        match = acronym_pattern.fullmatch(project_acronym)
+        if not match:
             raise EnterpriseManagementException("Invalid acronym")
-        md = re.compile(r"^.{10,30}$")
-        res = md.fullmatch(project_description)
-        if not res:
+
+        description_pattern = re.compile(r"^.{10,30}$")
+        match = description_pattern.fullmatch(project_description)
+        if not match:
             raise EnterpriseManagementException("Invalid description format")
 
-        mr = re.compile(r"(HR|FINANCE|LEGAL|LOGISTICS)")
-        res = mr.fullmatch(department)
-        if not res:
+        department_pattern = re.compile(r"(HR|FINANCE|LEGAL|LOGISTICS)")
+        match = department_pattern.fullmatch(department)
+        if not match:
             raise EnterpriseManagementException("Invalid department")
 
-        self.validate_starting_date(date)
+        self.validate_starting_date(starting_date)
 
         try:
             f_bdgt  = float(budget)
@@ -124,7 +126,7 @@ class EnterpriseManager:
                                         project_acronym=project_acronym,
                                         project_description=project_description,
                                         department=department,
-                                        starting_date=date,
+                                        starting_date=starting_date,
                                         project_budget=budget)
 
         try:
