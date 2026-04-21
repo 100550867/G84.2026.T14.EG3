@@ -105,7 +105,7 @@ class EnterpriseManager:
     @staticmethod
     def validate_budget(budget):
         """
-
+        Validates the project budget
         """
         try:
             budget_amount = float(budget)
@@ -122,31 +122,11 @@ class EnterpriseManager:
         if budget_amount < 50000 or budget_amount > 1000000:
             raise EnterpriseManagementException("Invalid budget amount")
 
-
-    # pylint: disable=too-many-arguments, too-many-positional-arguments
-    def register_project(self,
-                         company_cif: str,
-                         project_acronym: str,
-                         project_description: str,
-                         department: str,
-                         starting_date: str,
-                         budget: str):
-        """registers a new project"""
-        self.validate_cif(company_cif)
-
-        self.validate_project_fields(project_acronym, project_description, department)
-
-        self.validate_starting_date(starting_date)
-
-        self.validate_budget(budget)
-
-        new_project = EnterpriseProject(company_cif=company_cif,
-                                        project_acronym=project_acronym,
-                                        project_description=project_description,
-                                        department=department,
-                                        starting_date=starting_date,
-                                        project_budget=budget)
-
+    @staticmethod
+    def store_project(new_project):
+        """
+        Store a project in the JSON file, checking duplicates
+        """
         try:
             with open(PROJECTS_STORE_FILE, "r", encoding="utf-8",
                       newline="") as file:
@@ -174,6 +154,31 @@ class EnterpriseManager:
         except json.JSONDecodeError as exception:
             raise EnterpriseManagementException(
                 "JSON Decode Error - Wrong JSON Format") from exception
+    # pylint: disable=too-many-arguments, too-many-positional-arguments
+    def register_project(self,
+                         company_cif: str,
+                         project_acronym: str,
+                         project_description: str,
+                         department: str,
+                         starting_date: str,
+                         budget: str):
+        """registers a new project"""
+        self.validate_cif(company_cif)
+
+        self.validate_project_fields(project_acronym, project_description, department)
+
+        self.validate_starting_date(starting_date)
+
+        self.validate_budget(budget)
+
+        new_project = EnterpriseProject(company_cif=company_cif,
+                                        project_acronym=project_acronym,
+                                        project_description=project_description,
+                                        department=department,
+                                        starting_date=starting_date,
+                                        project_budget=budget)
+
+        self.store_project(new_project)
 
         return new_project.project_id
 
