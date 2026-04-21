@@ -25,22 +25,22 @@ class EnterpriseManager:
         if not cif_pattern.fullmatch(company_cif):
             raise EnterpriseManagementException("Invalid CIF format")
 
-        l = company_cif[0]
-        n = company_cif[1:8]
-        u = company_cif[8]
+        cif_letter = company_cif[0]
+        cif_numbers = company_cif[1:8]
+        cif_last_character = company_cif[8]
 
         s1 = 0
         s2 = 0
 
-        for i in range(len(n)):
+        for i in range(len(cif_numbers)):
             if i % 2 == 0:
-                x = int(n[i]) * 2
+                x = int(cif_numbers[i]) * 2
                 if x > 9:
                     s1 = s1 + (x // 10) + (x % 10)
                 else:
                     s1 = s1 + x
             else:
-                s2 = s2 + int(n[i])
+                s2 = s2 + int(cif_numbers[i])
 
         t = s1 + s2
         u2 = t % 10
@@ -51,11 +51,11 @@ class EnterpriseManager:
 
         dic = "JABCDEFGHI"
 
-        if l in ('A', 'B', 'E', 'H'):
-            if str(r) != u:
+        if cif_letter in ('A', 'B', 'E', 'H'):
+            if str(r) != cif_last_character:
                 raise EnterpriseManagementException("Invalid CIF character control number")
-        elif l in ('P', 'Q', 'S', 'K'):
-            if dic[r] != u:
+        elif cif_letter in ('P', 'Q', 'S', 'K'):
+            if dic[r] != cif_last_character:
                 raise EnterpriseManagementException("Invalid CIF character control letter")
         else:
             raise EnterpriseManagementException("CIF type not supported")
