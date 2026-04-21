@@ -151,7 +151,7 @@ class EnterpriseManager:
         return new_project.project_id
 
 
-    def find_docs(self, date_str):
+    def find_docs(self, query_date):
         """
         Generates a JSON report counting valid documents for a specific date.
 
@@ -159,7 +159,7 @@ class EnterpriseManager:
         Saves the output to 'resultado.json'.
 
         Args:
-            date_str (str): date to query.
+            query_date (str): date to query.
 
         Returns:
             number of documents found if report is successfully generated and saved.
@@ -168,13 +168,13 @@ class EnterpriseManager:
             EnterpriseManagementException: On invalid date, file IO errors,
                 missing data, or cryptographic integrity failure.
         """
-        mr = re.compile(r"^(([0-2]\d|3[0-1])\/(0\d|1[0-2])\/\d\d\d\d)$")
-        res = mr.fullmatch(date_str)
-        if not res:
+        date_pattern = re.compile(r"^(([0-2]\d|3[0-1])\/(0\d|1[0-2])\/\d\d\d\d)$")
+        match = date_pattern.fullmatch(query_date)
+        if not match:
             raise EnterpriseManagementException("Invalid date format")
 
         try:
-            my_date = datetime.strptime(date_str, "%d/%m/%Y").date()
+            parsed_date = datetime.strptime(query_date, "%d/%m/%Y").date()
         except ValueError as ex:
             raise EnterpriseManagementException("Invalid date format") from ex
 
@@ -196,7 +196,7 @@ class EnterpriseManager:
             # string conversion for easy match
             doc_date_str = datetime.fromtimestamp(time_val).strftime("%d/%m/%Y")
 
-            if doc_date_str == date_str:
+            if doc_date_str == query_date:
                 d_obj = datetime.fromtimestamp(time_val, tz=timezone.utc)
                 with freeze_time(d_obj):
                     # check the project id (thanks to freezetime)
@@ -212,7 +212,7 @@ class EnterpriseManager:
             raise EnterpriseManagementException("No documents found")
         # prepare json text
         now_str = datetime.now(timezone.utc).timestamp()
-        s = {"Querydate":  date_str,
+        s = {"Querydate":  query_date,
              "ReportDate": now_str,
              "Numfiles": rst
              }
