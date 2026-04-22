@@ -119,7 +119,6 @@ class EnterpriseManager:
                          starting_date: str,
                          budget: str):
         """registers a new project"""
-        self.validate_project_description(project_description)
         self.validate_department(department)
 
         self.validate_starting_date(starting_date)
