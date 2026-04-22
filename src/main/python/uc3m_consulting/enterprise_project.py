@@ -179,23 +179,21 @@ class EnterpriseProject:
             raise EnterpriseManagementException("Invalid department")
         return department
 
-    def validate_starting_date(self, starting_date):
-        """validates the  date format  using regex"""
-        date_pattern = re.compile(r"^(([0-2]\d|3[0-1])\/(0\d|1[0-2])\/\d\d\d\d)$")
-        match = date_pattern.fullmatch(starting_date)
-        if not match:
-            raise EnterpriseManagementException("Invalid date format")
-
-        try:
-            parsed_date = datetime.strptime(starting_date, "%d/%m/%Y").date()
-        except ValueError as exception:
-            raise EnterpriseManagementException("Invalid date format") from exception
+    @staticmethod
+    def validate_starting_date(starting_date: str) -> str:
+        """
+        Validate starting date
+        """
+        parsed_date = EnterpriseProject.validate_date_format(starting_date)
 
         if parsed_date < datetime.now(timezone.utc).date():
-            raise EnterpriseManagementException("Project's date must be today or later.")
+            raise EnterpriseManagementException(
+                "Project's date must be today or later."
+            )
 
         if parsed_date.year < 2025 or parsed_date.year > 2050:
             raise EnterpriseManagementException("Invalid date format")
+
         return starting_date
 
     @staticmethod
@@ -218,3 +216,23 @@ class EnterpriseProject:
         if budget_amount < 50000 or budget_amount > 1000000:
             raise EnterpriseManagementException("Invalid budget amount")
         return budget
+
+    @staticmethod
+    def validate_date_format(date_value: str):
+        """
+        Validate date format and return parsed date
+        """
+        date_pattern = re.compile(
+            r"^(([0-2]\d|3[0-1])\/(0\d|1[0-2])\/\d\d\d\d)$"
+        )
+        if not date_pattern.fullmatch(date_value):
+            raise EnterpriseManagementException("Invalid date format")
+
+        try:
+            parsed_date = datetime.strptime(date_value, "%d/%m/%Y").date()
+        except ValueError as exception:
+            raise EnterpriseManagementException(
+                "Invalid date format"
+            ) from exception
+
+        return parsed_date

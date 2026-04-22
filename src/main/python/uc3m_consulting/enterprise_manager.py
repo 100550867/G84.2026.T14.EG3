@@ -89,20 +89,10 @@ class EnterpriseManager:
             EnterpriseManagementException: On invalid date, file IO errors,
                 missing data, or cryptographic integrity failure.
         """
-        date_pattern = re.compile(r"^(([0-2]\d|3[0-1])\/(0\d|1[0-2])\/\d\d\d\d)$")
-        match = date_pattern.fullmatch(query_date)
-        if not match:
-            raise EnterpriseManagementException("Invalid date format")
-
-        try:
-            datetime.strptime(query_date, "%d/%m/%Y").date()
-        except ValueError as exception:
-            raise EnterpriseManagementException("Invalid date format") from exception
-
+        EnterpriseProject.validate_date_format(query_date)
 
         # open documents
         documents_list = self.load_documents()
-
 
         documents_found = 0
 
