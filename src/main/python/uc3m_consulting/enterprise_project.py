@@ -18,7 +18,7 @@ class EnterpriseProject:
         self.__company_cif = self.validate_cif(company_cif)
         self.__project_description = self.validate_project_description(project_description)
         self.__project_achronym = self.validate_project_acronym(project_acronym)
-        self.__department = department
+        self.__department = self.validate_department(department)
         self.__starting_date = starting_date
         self.__project_budget = project_budget
         justnow = datetime.now(timezone.utc)
@@ -168,3 +168,13 @@ class EnterpriseProject:
         if not description_pattern.fullmatch(project_description):
             raise EnterpriseManagementException("Invalid description format")
         return project_description
+
+    @staticmethod
+    def validate_department(department: str) -> str:
+        """
+        Validate department
+        """
+        department_pattern = re.compile(r"^(HR|FINANCE|LEGAL|LOGISTICS)$")
+        if not department_pattern.fullmatch(department):
+            raise EnterpriseManagementException("Invalid department")
+        return department
