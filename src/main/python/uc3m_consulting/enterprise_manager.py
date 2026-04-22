@@ -18,51 +18,6 @@ class EnterpriseManager:
     def __init__(self):
         pass
 
-    @staticmethod
-    def validate_cif(company_cif: str):
-        """validates a cif number """
-        if not isinstance(company_cif, str):
-            raise EnterpriseManagementException("CIF code must be a string")
-        cif_pattern = re.compile(r"^[ABCDEFGHJKNPQRSUVW]\d{7}[0-9A-J]$")
-        if not cif_pattern.fullmatch(company_cif):
-            raise EnterpriseManagementException("Invalid CIF format")
-
-        cif_letter = company_cif[0]
-        cif_numbers = company_cif[1:8]
-        cif_last_character = company_cif[8]
-
-        even_positions_sum = 0
-        odd_positions_sum = 0
-
-        for index in range(len(cif_numbers)):
-            if index % 2 == 0:
-                doubled_digit = int(cif_numbers[index]) * 2
-                if doubled_digit > 9:
-                    even_positions_sum = even_positions_sum + (doubled_digit // 10) + (doubled_digit % 10)
-                else:
-                    even_positions_sum = even_positions_sum + doubled_digit
-            else:
-                odd_positions_sum = odd_positions_sum + int(cif_numbers[index])
-
-        total_sum = even_positions_sum + odd_positions_sum
-        last_digit = total_sum % 10
-        control_digit = 10 - last_digit
-
-        if control_digit == 10:
-            control_digit = 0
-
-        control_letters = "JABCDEFGHI"
-
-        if cif_letter in ('A', 'B', 'E', 'H'):
-            if str(control_digit) != cif_last_character:
-                raise EnterpriseManagementException("Invalid CIF character control number")
-        elif cif_letter in ('P', 'Q', 'S', 'K'):
-            if control_letters[control_digit] != cif_last_character:
-                raise EnterpriseManagementException("Invalid CIF character control letter")
-        else:
-            raise EnterpriseManagementException("CIF type not supported")
-        return True
-
     def validate_starting_date(self, starting_date):
         """validates the  date format  using regex"""
         date_pattern = re.compile(r"^(([0-2]\d|3[0-1])\/(0\d|1[0-2])\/\d\d\d\d)$")
@@ -83,25 +38,34 @@ class EnterpriseManager:
         return starting_date
 
     @staticmethod
-    def validate_project_fields(project_acronym, project_description,
-                                department):
+    def validate_project_acronym(project_acronym: str) -> str:
         """
-        Validates, acronym, description and department fields
+        Validate project acronym
         """
-        acronym_pattern = re.compile(r"^[a-zA-Z0-9]{5,10}")
-        description_pattern = re.compile(r"^.{10,30}$")
-        department_pattern = re.compile(r"(HR|FINANCE|LEGAL|LOGISTICS)")
-
-        match = acronym_pattern.fullmatch(project_acronym)
-        if not match:
+        acronym_pattern = re.compile(r"^[a-zA-Z0-9]{5,10}$")
+        if not acronym_pattern.fullmatch(project_acronym):
             raise EnterpriseManagementException("Invalid acronym")
+        return project_acronym
 
-        match = description_pattern.fullmatch(project_description)
-        if not match:
+    @staticmethod
+    def validate_project_description(project_description: str) -> str:
+        """
+        Validate project description
+        """
+        description_pattern = re.compile(r"^.{10,30}$")
+        if not description_pattern.fullmatch(project_description):
             raise EnterpriseManagementException("Invalid description format")
-        match = department_pattern.fullmatch(department)
-        if not match:
+        return project_description
+
+    @staticmethod
+    def validate_department(department: str) -> str:
+        """
+        Validate department
+        """
+        department_pattern = re.compile(r"^(HR|FINANCE|LEGAL|LOGISTICS)$")
+        if not department_pattern.fullmatch(department):
             raise EnterpriseManagementException("Invalid department")
+        return department
 
     @staticmethod
     def validate_budget(budget):
@@ -165,9 +129,9 @@ class EnterpriseManager:
                          starting_date: str,
                          budget: str):
         """registers a new project"""
-        self.validate_cif(company_cif)
-
-        self.validate_project_fields(project_acronym, project_description, department)
+        self.validate_project_acronym(project_acronym)
+        self.validate_project_description(project_description)
+        self.validate_department(department)
 
         self.validate_starting_date(starting_date)
 
