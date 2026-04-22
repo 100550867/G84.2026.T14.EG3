@@ -19,8 +19,8 @@ class EnterpriseProject:
         self.__project_description = self.validate_project_description(project_description)
         self.__project_achronym = self.validate_project_acronym(project_acronym)
         self.__department = self.validate_department(department)
-        self.__starting_date = starting_date
-        self.__project_budget = project_budget
+        self.__starting_date = self.validate_starting_date(starting_date)
+        self.__project_budget = self.validate_budget(project_budget)
         justnow = datetime.now(timezone.utc)
         self.__time_stamp = datetime.timestamp(justnow)
 
@@ -178,3 +178,43 @@ class EnterpriseProject:
         if not department_pattern.fullmatch(department):
             raise EnterpriseManagementException("Invalid department")
         return department
+
+    def validate_starting_date(self, starting_date):
+        """validates the  date format  using regex"""
+        date_pattern = re.compile(r"^(([0-2]\d|3[0-1])\/(0\d|1[0-2])\/\d\d\d\d)$")
+        match = date_pattern.fullmatch(starting_date)
+        if not match:
+            raise EnterpriseManagementException("Invalid date format")
+
+        try:
+            parsed_date = datetime.strptime(starting_date, "%d/%m/%Y").date()
+        except ValueError as exception:
+            raise EnterpriseManagementException("Invalid date format") from exception
+
+        if parsed_date < datetime.now(timezone.utc).date():
+            raise EnterpriseManagementException("Project's date must be today or later.")
+
+        if parsed_date.year < 2025 or parsed_date.year > 2050:
+            raise EnterpriseManagementException("Invalid date format")
+        return starting_date
+
+    @staticmethod
+    def validate_budget(budget):
+        """
+        Validates the project budget
+        """
+        try:
+            budget_amount = float(budget)
+        except ValueError as exception:
+            raise EnterpriseManagementException(
+                "Invalid budget amount") from exception
+
+        budget_as_text = str(budget_amount)
+        if '.' in budget_as_text:
+            decimal_places = len(budget_as_text.split('.')[1])
+            if decimal_places > 2:
+                raise EnterpriseManagementException("Invalid budget amount")
+
+        if budget_amount < 50000 or budget_amount > 1000000:
+            raise EnterpriseManagementException("Invalid budget amount")
+        return budget
