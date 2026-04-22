@@ -17,7 +17,7 @@ class EnterpriseProject:
                  project_budget: float):
         self.__company_cif = self.validate_cif(company_cif)
         self.__project_description = project_description
-        self.__project_achronym = project_acronym
+        self.__project_achronym = self.validate_project_acronym(project_acronym)
         self.__department = department
         self.__starting_date = starting_date
         self.__project_budget = project_budget
@@ -148,3 +148,13 @@ class EnterpriseProject:
             raise EnterpriseManagementException("CIF type not supported")
 
         return company_cif
+
+    @staticmethod
+    def validate_project_acronym(project_acronym: str) -> str:
+        """
+        Validate project acronym
+        """
+        acronym_pattern = re.compile(r"^[a-zA-Z0-9]{5,10}$")
+        if not acronym_pattern.fullmatch(project_acronym):
+            raise EnterpriseManagementException("Invalid acronym")
+        return project_acronym
