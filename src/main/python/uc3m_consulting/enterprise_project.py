@@ -16,7 +16,7 @@ class EnterpriseProject:
                  starting_date: str,
                  project_budget: float):
         self.__company_cif = self.validate_cif(company_cif)
-        self.__project_description = project_description
+        self.__project_description = self.validate_project_description(project_description)
         self.__project_achronym = self.validate_project_acronym(project_acronym)
         self.__department = department
         self.__starting_date = starting_date
@@ -158,3 +158,13 @@ class EnterpriseProject:
         if not acronym_pattern.fullmatch(project_acronym):
             raise EnterpriseManagementException("Invalid acronym")
         return project_acronym
+
+    @staticmethod
+    def validate_project_description(project_description: str) -> str:
+        """
+        Validate project description
+        """
+        description_pattern = re.compile(r"^.{10,30}$")
+        if not description_pattern.fullmatch(project_description):
+            raise EnterpriseManagementException("Invalid description format")
+        return project_description
