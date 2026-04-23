@@ -15,6 +15,15 @@ from uc3m_consulting.project_document import ProjectDocument
 
 class EnterpriseManager:
     """Class for providing the methods for managing the orders"""
+
+    instance = None
+
+    def __new__(cls):
+        if not EnterpriseManager.instance:
+            EnterpriseManager.instance = super(EnterpriseManager, cls).__new__(cls)
+
+        return EnterpriseManager.instance
+
     def __init__(self):
         pass
 
