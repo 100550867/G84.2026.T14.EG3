@@ -162,16 +162,6 @@ class EnterpriseProject:
         return project_description
 
     @staticmethod
-    def validate_department(department: str) -> str:
-        """
-        Validate department
-        """
-        department_pattern = re.compile(r"^(HR|FINANCE|LEGAL|LOGISTICS)$")
-        if not department_pattern.fullmatch(department):
-            raise EnterpriseManagementException("Invalid department")
-        return department
-
-    @staticmethod
     def validate_starting_date(starting_date: str) -> str:
         """
         Validate starting date
