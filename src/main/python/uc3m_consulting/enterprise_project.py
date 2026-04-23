@@ -157,22 +157,6 @@ class EnterpriseProject:
 
         return company_cif
 
-    @staticmethod
-    def validate_starting_date(starting_date: str) -> str:
-        """
-        Validate starting date
-        """
-        parsed_date = EnterpriseProject.validate_date_format(starting_date)
-
-        if parsed_date < datetime.now(timezone.utc).date():
-            raise EnterpriseManagementException(
-                "Project's date must be today or later."
-            )
-
-        if parsed_date.year < 2025 or parsed_date.year > 2050:
-            raise EnterpriseManagementException("Invalid date format")
-
-        return starting_date
 
     @staticmethod
     def validate_budget(budget):
