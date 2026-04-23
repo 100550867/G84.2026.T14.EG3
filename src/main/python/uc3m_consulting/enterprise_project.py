@@ -12,6 +12,7 @@ from uc3m_consulting.attributes.attribute_department import  AttributeDepartment
 from uc3m_consulting.attributes.attribute_project_description import AttributeProjectDescription
 from uc3m_consulting.attributes.attribute_starting_date import AttributeStartingDate
 from uc3m_consulting.attributes.attribute_budget import AttributeBudget
+from uc3m_consulting.attributes.attribute_cif import AttributeCif
 
 class EnterpriseProject:
     """Class representing a project"""
@@ -23,7 +24,7 @@ class EnterpriseProject:
                  department: str,
                  starting_date: str,
                  project_budget: float):
-        self.__company_cif = self.validate_cif(company_cif)
+        self.__company_cif = AttributeCif(company_cif).value
         self.__project_description = AttributeProjectDescription(
             project_description).value
         self.__project_achronym = AttributeProjectAcronym(project_acronym).value
