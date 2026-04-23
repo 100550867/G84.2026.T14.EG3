@@ -110,56 +110,6 @@ class EnterpriseProject:
         return hashlib.md5(str(self).encode()).hexdigest()
 
     @staticmethod
-    def validate_cif(company_cif: str):
-        """validates a cif number """
-        if not isinstance(company_cif, str):
-            raise EnterpriseManagementException("CIF code must be a string")
-
-        cif_pattern = re.compile(r"^[ABCDEFGHJKNPQRSUVW]\d{7}[0-9A-J]$")
-        if not cif_pattern.fullmatch(company_cif):
-            raise EnterpriseManagementException("Invalid CIF format")
-
-        cif_letter = company_cif[0]
-        cif_numbers = company_cif[1:8]
-        cif_last_character = company_cif[8]
-
-        even_positions_sum = 0
-        odd_positions_sum = 0
-
-        for index in range(len(cif_numbers)):
-            if index % 2 == 0:
-                doubled_digit = int(cif_numbers[index]) * 2
-                if doubled_digit > 9:
-                    even_positions_sum = even_positions_sum + (
-                                doubled_digit // 10) + (doubled_digit % 10)
-                else:
-                    even_positions_sum = even_positions_sum + doubled_digit
-            else:
-                odd_positions_sum = odd_positions_sum + int(cif_numbers[index])
-
-        total_sum = even_positions_sum + odd_positions_sum
-        last_digit = total_sum % 10
-        control_digit = 10 - last_digit
-
-        if control_digit == 10:
-            control_digit = 0
-
-        control_letters = "JABCDEFGHI"
-
-        if cif_letter in ('A', 'B', 'E', 'H'):
-            if str(control_digit) != cif_last_character:
-                raise EnterpriseManagementException(
-                    "Invalid CIF character control number")
-        elif cif_letter in ('P', 'Q', 'S', 'K'):
-            if control_letters[control_digit] != cif_last_character:
-                raise EnterpriseManagementException(
-                    "Invalid CIF character control letter")
-        else:
-            raise EnterpriseManagementException("CIF type not supported")
-
-        return company_cif
-
-    @staticmethod
     def validate_date_format(date_value: str):
         """
         Validate date format and return parsed date
