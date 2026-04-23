@@ -158,28 +158,6 @@ class EnterpriseProject:
 
         return company_cif
 
-
-    @staticmethod
-    def validate_budget(budget):
-        """
-        Validates the project budget
-        """
-        try:
-            budget_amount = float(budget)
-        except ValueError as exception:
-            raise EnterpriseManagementException(
-                "Invalid budget amount") from exception
-
-        budget_as_text = str(budget_amount)
-        if '.' in budget_as_text:
-            decimal_places = len(budget_as_text.split('.')[1])
-            if decimal_places > 2:
-                raise EnterpriseManagementException("Invalid budget amount")
-
-        if budget_amount < 50000 or budget_amount > 1000000:
-            raise EnterpriseManagementException("Invalid budget amount")
-        return budget
-
     @staticmethod
     def validate_date_format(date_value: str):
         """
