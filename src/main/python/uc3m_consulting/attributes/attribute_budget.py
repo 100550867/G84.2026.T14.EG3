@@ -5,7 +5,6 @@ from uc3m_consulting.enterprise_management_exception import (
     EnterpriseManagementException,
 )
 
-
 class AttributeBudget(Attribute):
     """Valida el presupuesto del proyecto."""
 
