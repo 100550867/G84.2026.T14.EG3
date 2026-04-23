@@ -117,4 +117,3 @@ class EnterpriseManager:
                         "Numfiles": documents_found
                         }
         return report_entry
-
