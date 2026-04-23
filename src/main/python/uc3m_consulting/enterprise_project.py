@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 from uc3m_consulting.enterprise_management_exception import EnterpriseManagementException
 from uc3m_consulting.attributes.attribute_project_acronym import AttributeProjectAcronym
 from uc3m_consulting.attributes.attribute_department import  AttributeDepartment
+from uc3m_consulting.attributes.attribute_project_description import AttributeProjectDescription
 
 class EnterpriseProject:
     """Class representing a project"""
@@ -18,7 +19,8 @@ class EnterpriseProject:
                  starting_date: str,
                  project_budget: float):
         self.__company_cif = self.validate_cif(company_cif)
-        self.__project_description = self.validate_project_description(project_description)
+        self.__project_description = AttributeProjectDescription(
+            project_description).value
         self.__project_achronym = AttributeProjectAcronym(project_acronym).value
         self.__department = AttributeDepartment(department).value
         self.__starting_date = self.validate_starting_date(starting_date)
