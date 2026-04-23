@@ -151,16 +151,6 @@ class EnterpriseProject:
         return company_cif
 
     @staticmethod
-    def validate_project_acronym(project_acronym: str) -> str:
-        """
-        Validate project acronym
-        """
-        acronym_pattern = re.compile(r"^[a-zA-Z0-9]{5,10}$")
-        if not acronym_pattern.fullmatch(project_acronym):
-            raise EnterpriseManagementException("Invalid acronym")
-        return project_acronym
-
-    @staticmethod
     def validate_project_description(project_description: str) -> str:
         """
         Validate project description
