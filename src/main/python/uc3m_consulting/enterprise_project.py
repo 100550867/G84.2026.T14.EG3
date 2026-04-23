@@ -4,6 +4,7 @@ import json
 import re
 from datetime import datetime, timezone
 from uc3m_consulting.enterprise_management_exception import EnterpriseManagementException
+from uc3m_consulting.attributes.attribute_project_acronym import AttributeProjectAcronym
 
 class EnterpriseProject:
     """Class representing a project"""
@@ -17,7 +18,7 @@ class EnterpriseProject:
                  project_budget: float):
         self.__company_cif = self.validate_cif(company_cif)
         self.__project_description = self.validate_project_description(project_description)
-        self.__project_achronym = self.validate_project_acronym(project_acronym)
+        self.__project_achronym = AttributeProjectAcronym(project_acronym).value
         self.__department = self.validate_department(department)
         self.__starting_date = self.validate_starting_date(starting_date)
         self.__project_budget = self.validate_budget(project_budget)
