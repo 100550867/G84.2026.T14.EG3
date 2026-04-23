@@ -3,9 +3,6 @@ import hashlib
 import json
 import re
 from datetime import datetime, timezone
-
-from uc3m_consulting.attributes.attribute_starting_date import \
-    AttributeStartingDate
 from uc3m_consulting.enterprise_management_exception import EnterpriseManagementException
 from uc3m_consulting.attributes.attribute_project_acronym import AttributeProjectAcronym
 from uc3m_consulting.attributes.attribute_department import  AttributeDepartment
