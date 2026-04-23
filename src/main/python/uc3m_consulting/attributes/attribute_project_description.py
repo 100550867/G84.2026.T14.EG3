@@ -1,7 +1,7 @@
 """Atributo para validar la descripción del proyecto."""
 from uc3m_consulting.attributes.attribute import Attribute
 
-
+# pylint: disable=too-few-public-methods
 class AttributeProjectDescription(Attribute):
     """Valida la descripción del proyecto."""
 

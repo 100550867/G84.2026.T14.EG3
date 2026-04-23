@@ -5,6 +5,7 @@ from uc3m_consulting.enterprise_management_exception import (
     EnterpriseManagementException,
 )
 
+# pylint: disable=too-few-public-methods
 class AttributeBudget(Attribute):
     """Valida el presupuesto del proyecto."""
 

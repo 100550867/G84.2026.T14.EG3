@@ -6,7 +6,7 @@ from uc3m_consulting.enterprise_management_exception import (
     EnterpriseManagementException,
 )
 
-
+# pylint: disable=too-few-public-methods
 class AttributeStartingDate(Attribute):
     """Valida la fecha de inicio del proyecto."""
 

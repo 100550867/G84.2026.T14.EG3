@@ -1,7 +1,7 @@
 """Atributo para validar el departamento."""
 from uc3m_consulting.attributes.attribute import Attribute
 
-
+# pylint: disable=too-few-public-methods
 class AttributeDepartment(Attribute):
     """Valida el departamento."""
 
