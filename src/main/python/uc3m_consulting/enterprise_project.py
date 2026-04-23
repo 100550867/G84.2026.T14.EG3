@@ -154,16 +154,6 @@ class EnterpriseProject:
         return company_cif
 
     @staticmethod
-    def validate_project_description(project_description: str) -> str:
-        """
-        Validate project description
-        """
-        description_pattern = re.compile(r"^.{10,30}$")
-        if not description_pattern.fullmatch(project_description):
-            raise EnterpriseManagementException("Invalid description format")
-        return project_description
-
-    @staticmethod
     def validate_starting_date(starting_date: str) -> str:
         """
         Validate starting date
