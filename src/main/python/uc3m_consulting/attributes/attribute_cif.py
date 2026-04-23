@@ -1,7 +1,3 @@
-"""
-Created By Adrian Villanueva Vergara abr 2026
-Universidad Carlo III de Madrid 
-"""
 """Atributo para validar el CIF."""
 from uc3m_consulting.attributes.attribute import Attribute
 from uc3m_consulting.enterprise_management_exception import (
