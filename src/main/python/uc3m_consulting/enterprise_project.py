@@ -11,6 +11,7 @@ from uc3m_consulting.attributes.attribute_project_acronym import AttributeProjec
 from uc3m_consulting.attributes.attribute_department import  AttributeDepartment
 from uc3m_consulting.attributes.attribute_project_description import AttributeProjectDescription
 from uc3m_consulting.attributes.attribute_starting_date import AttributeStartingDate
+from uc3m_consulting.attributes.attribute_budget import AttributeBudget
 
 class EnterpriseProject:
     """Class representing a project"""
@@ -28,7 +29,7 @@ class EnterpriseProject:
         self.__project_achronym = AttributeProjectAcronym(project_acronym).value
         self.__department = AttributeDepartment(department).value
         self.__starting_date = AttributeStartingDate(starting_date).value
-        self.__project_budget = self.validate_budget(project_budget)
+        self.__project_budget = AttributeBudget(project_budget).value
         justnow = datetime.now(timezone.utc)
         self.__time_stamp = datetime.timestamp(justnow)
 

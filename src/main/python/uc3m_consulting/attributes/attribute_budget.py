@@ -1,6 +1,6 @@
 """
 Created By Adrian Villanueva Vergara abr 2026
-Universidad Carlo III de Madrid 
+Universidad Carlo III de Madrid
 """
 """Atributo para validar el presupuesto."""
 from uc3m_consulting.attributes.attribute import Attribute
@@ -12,13 +12,10 @@ from uc3m_consulting.enterprise_management_exception import (
 class AttributeBudget(Attribute):
     """Valida el presupuesto del proyecto."""
 
-    def _validate(self, attr_value: str) -> str:
-        if not isinstance(attr_value, str):
-            raise EnterpriseManagementException("Invalid budget amount")
-
+    def _validate(self, attr_value):
         try:
             budget_amount = float(attr_value)
-        except ValueError as exception:
+        except (ValueError, TypeError) as exception:
             raise EnterpriseManagementException(
                 "Invalid budget amount"
             ) from exception
