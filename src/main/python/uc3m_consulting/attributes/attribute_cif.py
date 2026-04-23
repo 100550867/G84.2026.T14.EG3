@@ -21,19 +21,19 @@ class AttributeCif(Attribute):
         even_positions_sum = 0
         odd_positions_sum = 0
 
-        for index in range(len(cif_numbers)):
+        for index, digit in enumerate(cif_numbers):
             if index % 2 == 0:
-                doubled_digit = int(cif_numbers[index]) * 2
+                doubled_digit = int(digit) * 2
                 if doubled_digit > 9:
                     even_positions_sum += (
-                        doubled_digit // 10
-                    ) + (
-                        doubled_digit % 10
-                    )
+                                                  doubled_digit // 10
+                                          ) + (
+                                                  doubled_digit % 10
+                                          )
                 else:
                     even_positions_sum += doubled_digit
             else:
-                odd_positions_sum += int(cif_numbers[index])
+                odd_positions_sum += int(digit)
 
         total_sum = even_positions_sum + odd_positions_sum
         control_digit = 10 - (total_sum % 10)
