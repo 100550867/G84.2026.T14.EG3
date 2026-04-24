@@ -3,11 +3,12 @@
 
 from datetime import datetime, timezone
 
-from freezegun import freeze_time
 from uc3m_consulting.enterprise_project import EnterpriseProject
 from uc3m_consulting.enterprise_management_exception import EnterpriseManagementException
 from uc3m_consulting.project_document import ProjectDocument
-from uc3m_consulting.json_store import JsonStore
+from uc3m_consulting.storage.project_json_store import ProjectJsonStore
+from uc3m_consulting.storage.document_json_store import DocumentJsonStore
+from uc3m_consulting.storage.report_json_store import ReportJsonStore
 
 class EnterpriseManager:
     """Class for providing the methods for managing the orders"""
@@ -40,7 +41,7 @@ class EnterpriseManager:
                                         starting_date=starting_date,
                                         project_budget=budget)
 
-        JsonStore().store_project(new_project)
+        ProjectJsonStore.store_project(new_project)
 
         return new_project.project_id
 
@@ -50,7 +51,7 @@ class EnterpriseManager:
         """
         EnterpriseProject.validate_date_format(query_date)
 
-        documents_list = JsonStore().load_documents()
+        documents_list = DocumentJsonStore.load_documents()
         documents_found = self.count_valid_documents(documents_list,
                                                      query_date)
 
@@ -58,9 +59,9 @@ class EnterpriseManager:
             raise EnterpriseManagementException("No documents found")
 
         report_entry = self.build_report_entry(query_date, documents_found)
-        reports_list = JsonStore().load_reports_list()
+        reports_list = ReportJsonStore.load_reports_list()
         reports_list.append(report_entry)
-        JsonStore().save_reports_list(reports_list)
+        ReportJsonStore.save_reports_list(reports_list)
 
         return documents_found
 
@@ -74,24 +75,6 @@ class EnterpriseManager:
             "%d/%m/%Y")
         return document_date == query_date
 
-    @staticmethod
-    def check_document_signature(document_entry):
-        """
-        Check document signature consistency
-        """
-        register_timestamp = document_entry["register_date"]
-        frozen_datetime = datetime.fromtimestamp(register_timestamp,
-                                                 tz=timezone.utc)
-
-        with freeze_time(frozen_datetime):
-            project_document = ProjectDocument(
-                document_entry["project_id"],
-                document_entry["file_name"]
-            )
-            if project_document.document_signature != document_entry[
-                "document_signature"]:
-                raise EnterpriseManagementException(
-                    "Inconsistent document signature")
 
     def count_valid_documents(self, documents_list, query_date):
         """
@@ -101,7 +84,10 @@ class EnterpriseManager:
 
         for document_entry in documents_list:
             if self.is_document_from_query_date(document_entry, query_date):
-                self.check_document_signature(document_entry)
+                # LLAMADA AL NUEVO CLASSMETHOD (Punto B)
+                # Ya no necesitamos freezegun aquí porque la validación
+                # se hace dentro del objeto con los datos del JSON.
+                ProjectDocument.create_and_validate_from_entry(document_entry)
                 documents_found += 1
 
         return documents_found
